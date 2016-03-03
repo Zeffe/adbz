@@ -1,7 +1,11 @@
 import urllib, urllib2
 import random
 
-eSuffixes = [ "@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com" ]
+eSuffixes = [ "@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com",
+              "@aol.com", "@msn.com", "@suddenlink.net", "@yahoo.co.uk" ]
+
+word1 = ""
+word2 = ""
 
 def genUser():
     int1 = random.randint(0, 2335)
