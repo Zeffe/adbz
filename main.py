@@ -1,6 +1,7 @@
 import urllib, urllib2
 import random
 import os, time
+import thread
 
 eSuffixes = [ "@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com",
               "@aol.com", "@msn.com", "@suddenlink.net", "@yahoo.co.uk" ]
@@ -37,7 +38,7 @@ def genUser():
 
     return user
 
-def vote(user):
+def vote(user, trope):
     data = { "method":"dxp_vote", "email":user, "store_id":"1685", "opt_in":"no" }
     data = urllib.urlencode(data)
 
@@ -48,6 +49,15 @@ def vote(user):
 def interpret(command):
     if command == "exit":
         exit()
+    elif command == "init":
+        x = raw_input("Are you sure you want to vote 100 times without proxies? [Y/N]: ")
+        while True:
+            if x.lower() == "y":
+                for i in range(100):
+                    .start_new_thread(vote,(genUser(), "trope"))
+                    time.sleep(int(150)/float(1000))
+            elif x.lower() == "n":
+                break
     elif command == "info":
         print ""
         print " @Generates thousands upon thousands of unique emails."
