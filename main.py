@@ -42,7 +42,7 @@ def genUser():
     return user
 
 def vote(user, trope):                                      #1685 WC
-    data = { "method":"dxp_vote", "email":user, "store_id":"1542", "opt_in":"no" }
+    data = { "method":"dxp_vote", "email":user, "store_id":"1685", "opt_in":"no" }
     data = urllib.urlencode(data)
 
     get = urllib2.urlopen("http://api.dominosdxp.com/api_voting.php", data)
