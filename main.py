@@ -63,6 +63,8 @@ def interpret(command):
                     time.sleep(int(150)/float(1000))
                 print ""
                 print "Successfully voted with 100 users."
+                raw_input()
+                break
             elif x.lower() == "n":
                 break
     elif command == "info":
