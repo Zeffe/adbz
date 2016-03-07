@@ -20,6 +20,9 @@ def genUser():
     int1 = random.randint(0, 2335)
     int2 = random.randint(0, 2335)
     data = open("words.txt")
+
+    word1 = ""
+    word2 = ""
     
     for i, line in enumerate(data):
         if i == int1:
@@ -38,13 +41,15 @@ def genUser():
 
     return user
 
-def vote(user, trope):
-    data = { "method":"dxp_vote", "email":user, "store_id":"1685", "opt_in":"no" }
+def vote(user, trope):                                      #1685 WC
+    data = { "method":"dxp_vote", "email":user, "store_id":"1542", "opt_in":"no" }
     data = urllib.urlencode(data)
 
     get = urllib2.urlopen("http://api.dominosdxp.com/api_voting.php", data)
     #handleData = get.Read()
     get.close()
+
+    print " [+] Successfully voted with " + user
 
 def interpret(command):
     if command == "exit":
@@ -54,8 +59,10 @@ def interpret(command):
         while True:
             if x.lower() == "y":
                 for i in range(100):
-                    .start_new_thread(vote,(genUser(), "trope"))
+                    thread.start_new_thread(vote,(genUser(), "trope"))
                     time.sleep(int(150)/float(1000))
+                print ""
+                print "Successfully voted with 100 users."
             elif x.lower() == "n":
                 break
     elif command == "info":
