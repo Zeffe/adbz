@@ -5,6 +5,8 @@ import os, time
 eSuffixes = [ "@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com",
               "@aol.com", "@msn.com", "@suddenlink.net", "@yahoo.co.uk" ]
 
+proxies = []
+
 word1 = ""
 word2 = ""
 
@@ -34,6 +36,14 @@ def genUser():
     user += eSuffixes[random.randint(0, len(eSuffixes) - 1)]
 
     return user
+
+def vote(user):
+    data = { "method":"dxp_vote", "email":user, "store_id":"1685", "opt_in":"no" }
+    data = urllib.urlencode(data)
+
+    get = urllib2.urlopen("http://api.dominosdxp.com/api_voting.php", data)
+    #handleData = get.Read()
+    get.close()
 
 def interpret(command):
     if command == "exit":
