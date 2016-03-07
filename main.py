@@ -7,6 +7,10 @@ eSuffixes = [ "@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com",
               "@aol.com", "@msn.com", "@suddenlink.net", "@yahoo.co.uk" ]
 
 proxies = []
+graveyard_proxies = []
+
+thread_spawn = []
+thread_dead = []
 
 word1 = ""
 word2 = ""
@@ -23,7 +27,7 @@ def genUser():
 
     word1 = ""
     word2 = ""
-    
+
     for i, line in enumerate(data):
         if i == int1:
             word1 = line
@@ -51,6 +55,22 @@ def vote(user, trope):                                      #1685 WC
 
     print " [+] Successfully voted with " + user
 
+def proxy_vote(user, proxy, _id):
+    try:
+        data = { "method":"dxp_vote", "email": user, "store_id":"1685", "opt_in":"no"}
+        data = urllib.urlencode(data)
+        proxy = urllib2.ProxyHandler({"http": proxy})
+        _open = urllib2.build_opener(proxy)
+        urllib2.install_opener(_open)
+
+        get = urllib2.urlopen("http://api.dominosdxp.com/api_voting.php", data)
+        get.close()
+
+        print " [" + _id + "+] Successfully voted with " + user + "( " + proxy + " )"
+    except urllib2.HTTPError, error:
+        print " [" + _id + "-] Proxy " + proxy + " just died on " + user + "!"
+        graveyard_proxies.append(proxy)
+    thread_dead.append([_id.split(":")[0], _id.split(":")[1]])
 def interpret(command):
     if command == "exit":
         exit()
@@ -66,6 +86,35 @@ def interpret(command):
                 raw_input()
                 break
             elif x.lower() == "n":
+                while True:
+                    z = raw_input("[>] How many votes per proxy?: ")
+                    try:
+                        if(int(z) > 0):
+                            z = int(z)
+                            break
+                    except:
+                        print " @Error | Number must be numeric and larger than 0."
+                for i in range(len(proxies)):
+                    if proxies[i] in graveyard_proxies:
+                        print "Skipped over a dead proxy: " + proxies[i] + "!"
+                        continue
+                    for i in range(z):
+                        #thread id format: Parent_Proxy:Child_Proxy
+                        thread.start_new_thread(vote, (genUser(), proxies[i], z + ":" + i))
+                        thread_spawn.append([z, i])
+                        time.sleep(int(150)/float(1000))
+                while True:
+                    if len(thread_spawn) == len(thread_dead):
+                        break
+                while True:
+                    for i in range(len(thread_dead)):
+                        if(thread_spawn[i] in thread_dead):
+                            thread_spawn.pop(i)
+                    if len(thread_spawn) == 0:
+                        break
+                print ""
+                print "Successfully voted with " + len(thread_dead) + " users."
+                raw_input()
                 break
     elif command == "info":
         print ""
@@ -97,14 +146,14 @@ def interpret(command):
         _file = open(out + ".txt", "w")
 
         print ""
-        
+
         for i in range(genAmnt):
             _user = genUser()
             _file.write(_user + "\n")
             print " [+] " + _user
 
         _file.close()
-        
+
         print ""
         raw_input("Finished!")
         menu()
