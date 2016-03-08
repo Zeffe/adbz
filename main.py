@@ -55,22 +55,23 @@ def vote(user, trope):                                      #1685 WC
 
     print " [+] Successfully voted with " + user
 
-def proxy_vote(user, proxy, _id):
+def proxy_vote(user, _proxy, _id):
     try:
         data = { "method":"dxp_vote", "email": user, "store_id":"1685", "opt_in":"no"}
         data = urllib.urlencode(data)
-        proxy = urllib2.ProxyHandler({"http": proxy})
+        proxy = urllib2.ProxyHandler({"http": _proxy})
         _open = urllib2.build_opener(proxy)
         urllib2.install_opener(_open)
 
         get = urllib2.urlopen("http://api.dominosdxp.com/api_voting.php", data)
         get.close()
 
-        print " [" + _id + "+] Successfully voted with " + user + "( " + proxy + " )"
+        print " [" + _id + "+] Successfully voted with " + user + "( " + _proxy + " )"
     except urllib2.HTTPError, error:
-        print " [" + _id + "-] Proxy " + proxy + " just died on " + user + "!"
-        graveyard_proxies.append(proxy)
+        print " [" + _id + "-] Proxy " + _proxy + " just died on " + user + "!"
+        graveyard_proxies.append(_proxy)
     thread_dead.append([_id.split(":")[0], _id.split(":")[1]])
+    
 def interpret(command):
     if command == "exit":
         exit()
@@ -94,13 +95,18 @@ def interpret(command):
                             break
                     except:
                         print " @Error | Number must be numeric and larger than 0."
+                y = raw_input("[>] Proxy filename?: ")
+                _file = open(y, "r")
+                for i in _file:
+                    proxies.append(i.replace("\n",""))
+                _file.close()
                 for i in range(len(proxies)):
                     if proxies[i] in graveyard_proxies:
                         print "Skipped over a dead proxy: " + proxies[i] + "!"
                         continue
                     for i in range(z):
                         #thread id format: Parent_Proxy:Child_Proxy
-                        thread.start_new_thread(vote, (genUser(), proxies[i], z + ":" + i))
+                        thread.start_new_thread(proxy_vote, (genUser(), proxies[i], str(z) + ":" + str(i)))
                         thread_spawn.append([z, i])
                         time.sleep(int(150)/float(1000))
                 while True:
@@ -113,7 +119,7 @@ def interpret(command):
                     if len(thread_spawn) == 0:
                         break
                 print ""
-                print "Successfully voted with " + len(thread_dead) + " users."
+                print "Successfully voted with " + str(len(thread_dead)) + " users."
                 raw_input()
                 break
     elif command == "info":
