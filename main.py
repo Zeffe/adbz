@@ -104,10 +104,10 @@ def interpret(command):
                     if proxies[i] in graveyard_proxies:
                         print "Skipped over a dead proxy: " + proxies[i] + "!"
                         continue
-                    for i in range(z):
+                    for j in range(z):
                         #thread id format: Parent_Proxy:Child_Proxy
-                        thread.start_new_thread(proxy_vote, (genUser(), proxies[i], str(z) + ":" + str(i)))
-                        thread_spawn.append([z, i])
+                        thread.start_new_thread(proxy_vote, (genUser(), proxies[i], str(j) + ":" + str(i)))
+                        thread_spawn.append([j, i])
                         time.sleep(int(150)/float(1000))
                 while True:
                     if len(thread_spawn) == len(thread_dead):
